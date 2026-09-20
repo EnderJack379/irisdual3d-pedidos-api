@@ -11,4 +11,7 @@ public interface IPedidoService {
     
     // El nuevo requisito de la HU002
     PedidoDTO getPedidoById(Integer id);
+    
+    PedidoDTO updatePedido(Integer id, Pedido pedidoDetalles);
+    void deletePedido(Integer id);
 }
