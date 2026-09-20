@@ -1,12 +1,13 @@
 package com.irisdual.pedidos_api;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
+import com.irisdual.pedidos_api.repository.PedidoRepository;
+import com.irisdual.pedidos_api.service.IPedidoService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.irisdual.pedidos_api.repository.PedidoRepository;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @SpringBootTest
 class PedidosApiApplicationTests {
@@ -14,9 +15,17 @@ class PedidosApiApplicationTests {
     @Autowired
     private PedidoRepository pedidoRepository;
 
+    @Autowired
+    private IPedidoService pedidoService;
+
     @Test
     void verificarInyeccionRepositorio() {
-        // Valida que el repositorio se conecte correctamente a la base de datos
         assertNotNull(pedidoRepository, "El repositorio de pedidos debe estar instanciado en el contexto");
+    }
+
+    @Test
+    void verificarConsultasPedido() {
+        // Valida que la consulta a la base de datos y el mapeo a DTO se ejecuten sin lanzar excepciones de Hibernate
+        assertDoesNotThrow(() -> pedidoService.getAllPedidos(), "La consulta general de pedidos no debe arrojar errores");
     }
 }

@@ -5,6 +5,10 @@ import com.irisdual.pedidos_api.entity.Pedido;
 import java.util.List;
 
 public interface IPedidoService {
+    // Tus métodos originales
     List<PedidoDTO> getAllPedidos();
-    PedidoDTO createPedido(Pedido pedido); // <- Cambio aquí
+    PedidoDTO createPedido(Pedido pedido); 
+    
+    // El nuevo requisito de la HU002
+    PedidoDTO getPedidoById(Integer id);
 }

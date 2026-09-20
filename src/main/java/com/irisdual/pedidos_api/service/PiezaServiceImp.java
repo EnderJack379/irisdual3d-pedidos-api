@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class PiezaServiceImp implements IPiezaService {
@@ -28,14 +27,14 @@ public class PiezaServiceImp implements IPiezaService {
     public List<PiezaDTO> getAllPiezas() {
         return piezaRepository.findAll().stream()
                 .map(pieza -> piezaMapper.piezaAPiezaDTO(pieza))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
     public List<PiezaDTO> getPiezasByCategoria(Integer categoriaId) {
         return piezaRepository.findByCategoriaId(categoriaId).stream()
                 .map(pieza -> piezaMapper.piezaAPiezaDTO(pieza))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

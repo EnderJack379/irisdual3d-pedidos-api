@@ -8,12 +8,13 @@ import com.irisdual.pedidos_api.repository.PedidoRepository;
 import com.irisdual.pedidos_api.repository.PiezaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional; // <-- Import agregado
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
+@Transactional // <-- Anotación agregada para evitar LazyInitializationException
 public class PedidoServiceImp implements IPedidoService {
 
     @Autowired
@@ -29,7 +30,7 @@ public class PedidoServiceImp implements IPedidoService {
     public List<PedidoDTO> getAllPedidos() {
         return pedidoRepository.findAll().stream()
                 .map(pedido -> pedidoMapper.pedidoAPedidoDTO(pedido))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -46,5 +47,12 @@ public class PedidoServiceImp implements IPedidoService {
         
         Pedido pedidoGuardado = pedidoRepository.save(pedido);
         return pedidoMapper.pedidoAPedidoDTO(pedidoGuardado); 
+    }
+
+    @Override
+    public PedidoDTO getPedidoById(Integer id) {
+        return pedidoRepository.findById(id)
+                .map(pedido -> pedidoMapper.pedidoAPedidoDTO(pedido))
+                .orElse(null);
     }
 }

@@ -22,13 +22,12 @@ public class Pedido {
     // Relación Muchos a Muchos con la tabla intermedia
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-        name = "pedidos_piezas", // Nombre de la tabla intermedia que se creará sola
+        name = "pedidos_piezas",
         joinColumns = @JoinColumn(name = "pedido_id"),
         inverseJoinColumns = @JoinColumn(name = "pieza_id")
     )
     private List<Pieza> piezas;
 
-    // Métodos manuales (Getters y Setters)
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 
@@ -40,7 +39,7 @@ public class Pedido {
 
     public List<Pieza> getPiezas() { return piezas; }
     public void setPiezas(List<Pieza> piezas) { this.piezas = piezas; }
-    
+
     // Método para auto-asignar la fecha al momento de crearlo
     @PrePersist
     public void prePersist() {

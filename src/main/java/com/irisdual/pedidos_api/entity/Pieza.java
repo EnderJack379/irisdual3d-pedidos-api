@@ -1,9 +1,7 @@
 package com.irisdual.pedidos_api.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
 
-@Data
 @Entity
 @Table(name = "piezas")
 public class Pieza {
@@ -26,7 +24,6 @@ public class Pieza {
     @JoinColumn(name = "cat_id", nullable = false)
     private Categoria categoria;
 
-    // Métodos manuales para garantizar que Spring mapee el JSON de Postman
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 
