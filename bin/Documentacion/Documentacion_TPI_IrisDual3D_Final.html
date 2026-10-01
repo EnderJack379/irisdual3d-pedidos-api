@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IrisDual 3D — Documentación Técnica TPI | POO - UNJu</title>
+  <style>
+    :root {
+      --purple-deep: #4c1d95;
+      --purple-mid: #6d28d9;
+      --indigo: #4338ca;
+      --indigo-light: #e0e7ff;
+      --purple-xlight: #f5f3ff;
+      --text: #1e293b;
+      --text-muted: #475569;
+      --border: #c4b5fd;
+      --border-light: #ddd6fe;
+      --white: #ffffff;
+      --code-bg: #f8fafc;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Cambria', Georgia, serif;
+      font-size: 11pt;
+      color: var(--text);
+      background: #fff;
+      line-height: 1.75;
+    }
+
+    @page {
+      size: A4;
+      margin-top: 2.2cm;
+      margin-bottom: 1.8cm;
+      margin-left: 1.5cm;
+      margin-right: 1.5cm;
+    }
+
+    @media print {
+      body { font-size: 9.5pt; line-height: 1.45; }
+      #doc-header, #doc-footer { display: none !important; }
+      .main-content { padding: 0 !important; max-width: 100% !important; width: 100% !important; margin: 0 !important; }
+      .no-print { display: none !important; }
+      h1, h2, h3, h4 { page-break-after: avoid !important; break-after: avoid !important; }
+      h2 { font-size: 13pt; margin-top: 1rem; margin-bottom: 0.8rem; }
+      h3 { font-size: 11pt; margin-top: 0.8rem; margin-bottom: 0.4rem; }
+      table, figure, .hu-wrapper, .hu-table, .stack-grid, .arch-layers, .cover-block,
+      .cover-banner, .legend, .endpoint-list, .ep, .alert, .stack-card, .code-block, .snippet, .json-box {
+        page-break-inside: avoid !important; break-inside: avoid !important;
+      }
+      tr { page-break-inside: avoid !important; break-inside: avoid !important; }
+      p { orphans: 3; widows: 3; }
+      .section { margin-bottom: 1.5rem; }
+      .cover { page-break-after: always !important; break-after: page !important; min-height: auto !important; height: auto !important; padding: 0 !important; margin: 0 !important; }
+      .cover-banner { padding: 1.2rem 1.5rem 1rem !important; margin-bottom: 0.8rem !important; border-radius: 10px !important; }
+      .cover-logos { gap: 0.5rem !important; margin-bottom: 0.6rem !important; }
+      .cover-logos img.logo-unju { height: 70px !important; }
+      .cover-logos img.logo-propio { height: 38px !important; }
+      .cover-banner h1 { font-size: 1.35rem !important; margin-bottom: 0.15rem !important; }
+      .cover-banner .subtitle { font-size: 0.82rem !important; }
+      .cover-type-badge { margin-bottom: 0.6rem !important; padding: 0.2rem 0.9rem !important; font-size: 8pt !important; }
+      .cover-block { padding: 0.4rem 1rem !important; margin-bottom: 0.5rem !important; border-radius: 7px !important; }
+      .cover-block td { padding: 0.15rem 0.35rem !important; font-size: 9pt !important; }
+      .hu-wrapper { margin-bottom: 0.8rem !important; }
+      .hu-table { font-size: 8pt !important; line-height: 1.25 !important; }
+      .hu-table td, .hu-table th { padding: 4px 6px !important; }
+      .hu-table p { margin-bottom: 0.1rem !important; line-height: 1.25 !important; }
+      .stack-grid { grid-template-columns: repeat(4, 1fr) !important; gap: 0.4rem !important; }
+      .code-block pre { white-space: pre !important; word-break: normal !important; overflow-wrap: normal !important; font-size: 6.5pt !important; }
+      .snippet { font-size: 7.5pt !important; white-space: pre !important; word-break: normal !important; }
+      figure img { max-width: 96% !important; }
+    }
+
+    #doc-header {
+      position: fixed; top: 0; left: 0; right: 0;
+      background: var(--white);
+      border-bottom: 2px solid var(--purple-mid);
+      padding: 4px 1.5cm;
+      font-family: 'Cambria', serif; font-size: 8pt; color: var(--text-muted);
+      display: flex; justify-content: space-between; align-items: center; z-index: 1000;
+    }
+    #doc-header span { color: var(--purple-deep); font-weight: bold; }
+
+    #doc-footer {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--white);
+      border-top: 1.5px solid var(--border-light);
+      padding: 4px 1.5cm; font-size: 8pt; color: var(--text-muted);
+      display: flex; justify-content: space-between; align-items: center; z-index: 1000;
+    }
+
+    .main-content { max-width: 820px; margin: 0 auto; padding: 3.2cm 1.5cm 2.5cm; }
+
+    .cover {
+      page-break-after: always;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 0 1.5rem 2rem; text-align: center;
+    }
+
+    .cover-banner {
+      width: 100%;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      border-radius: 0 0 16px 16px;
+      padding: 2.5rem 2rem 2rem; margin-bottom: 2rem; color: white;
+    }
+
+    .cover-logos { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 1.2rem; margin-bottom: 1.2rem; }
+    .cover-logos img.logo-unju  { height: 130px; object-fit: contain; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4)); }
+    .cover-logos img.logo-propio { height: 65px;  object-fit: contain; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4)); }
+    .cover-banner h1 { font-family: 'Cambria', serif; font-size: 1.9rem; font-weight: bold; letter-spacing: 0.5px; margin-bottom: 0.3rem; color: #fff; }
+    .cover-banner .subtitle { font-size: 0.95rem; color: #c4b5fd; font-style: italic; }
+    .cover-body { width: 100%; max-width: 580px; }
+
+    .cover-block {
+      background: var(--purple-xlight); border: 1.5px solid var(--border);
+      border-radius: 10px; padding: 1.2rem 1.8rem; margin-bottom: 1rem; text-align: left;
+    }
+    .cover-block table { width: 100%; border: none; background: none; }
+    .cover-block td { border: none; background: none; padding: 0.25rem 0.5rem; font-size: 10.5pt; color: var(--text); vertical-align: top; }
+    .cover-block td:first-child { font-weight: bold; color: var(--purple-deep); white-space: nowrap; width: 160px; }
+    .cover-block a { color: var(--indigo); word-break: break-all; }
+
+    .cover-type-badge {
+      display: inline-block; background: var(--purple-deep); color: white;
+      font-size: 9pt; padding: 0.35rem 1.2rem; border-radius: 999px;
+      font-family: 'Cambria', serif; margin-bottom: 1.2rem; letter-spacing: 0.5px;
+    }
+
+    .section { margin-bottom: 2.5rem; }
+
+    h2 {
+      font-family: 'Cambria', serif; font-size: 14pt; font-weight: bold;
+      color: var(--purple-deep); border-bottom: 2.5px solid var(--indigo);
+      padding-bottom: 0.4rem; margin-bottom: 1rem; margin-top: 2rem;
+    }
+    h3 { font-size: 11.5pt; font-weight: bold; color: var(--indigo); margin-top: 1.3rem; margin-bottom: 0.5rem; }
+    p { margin-bottom: 0.7rem; }
+
+    code, .mono {
+      font-family: 'Consolas', 'Fira Code', 'Courier New', monospace;
+      font-size: 9.5pt; background: var(--code-bg); border: 1px solid var(--border-light);
+      border-radius: 3px; padding: 0.1rem 0.35rem; color: var(--purple-mid);
+    }
+
+    ul, ol { padding-left: 1.5rem; margin-bottom: 0.7rem; }
+    li { margin-bottom: 0.3rem; }
+
+    table { width: 100%; border-collapse: collapse; margin: 0.8rem 0 1.2rem; font-size: 9.5pt; page-break-inside: avoid; }
+    thead tr { background: var(--purple-deep); color: var(--white); }
+    thead th { padding: 0.55rem 0.9rem; text-align: left; font-family: 'Cambria', serif; font-weight: bold; letter-spacing: 0.3px; }
+    tbody td { padding: 0.5rem 0.9rem; border-bottom: 1px solid var(--border-light); vertical-align: top; }
+    tbody tr:nth-child(even) td { background: var(--purple-xlight); }
+    tbody tr:hover td { background: var(--indigo-light); }
+
+    .stack-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.7rem; margin: 1rem 0; }
+    .stack-card { border: 1.5px solid var(--border); border-radius: 8px; padding: 0.7rem 0.9rem; background: var(--purple-xlight); page-break-inside: avoid; }
+    .stack-card .sn { font-weight: bold; font-size: 9.5pt; color: var(--purple-deep); }
+    .stack-card .sv { font-size: 8.5pt; color: var(--text-muted); font-style: italic; }
+
+    .arch-layers { border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; margin: 1rem 0; }
+    .arch-row { display: flex; align-items: center; justify-content: space-between; padding: 0.55rem 1.1rem; border-bottom: 1px solid var(--border-light); font-size: 9.5pt; }
+    .arch-row:last-child { border-bottom: none; }
+    .arch-row .alabel { font-weight: bold; min-width: 130px; }
+    .arch-row .detail { color: var(--text-muted); font-size: 8.5pt; text-align: right; font-family: 'Consolas', monospace; }
+    .row-c { background: #fef3c7; } .row-c .alabel { color: #92400e; }
+    .row-s { background: #fce7f3; } .row-s .alabel { color: #9d174d; }
+    .row-r { background: #dcfce7; } .row-r .alabel { color: #166534; }
+    .row-e { background: #dbeafe; } .row-e .alabel { color: #1e40af; }
+    .row-d { background: #fff7ed; } .row-d .alabel { color: #9a3412; }
+    .row-sec { background: #ede9fe; } .row-sec .alabel { color: #5b21b6; }
+    .row-db  { background: #f1f5f9; } .row-db .alabel  { color: #475569; }
+
+    .hu-wrapper { page-break-inside: avoid; break-inside: avoid; margin-bottom: 1.5rem; }
+    .hu-table { border-collapse: collapse; width: 100%; margin-bottom: 0; font-family: 'Cambria', serif; color: black; page-break-inside: avoid; break-inside: avoid; }
+    .hu-table th, .hu-table td { border: 1px solid #94a3b8; padding: 8px 10px; vertical-align: top; }
+    .hu-table strong { font-weight: bold; }
+
+    .endpoint-list { margin: 0.5rem 0 1rem; }
+    .ep { display: flex; align-items: center; gap: 0.6rem; padding: 0.4rem 0; border-bottom: 1px solid var(--border-light); font-size: 9.5pt; }
+    .ep:last-child { border-bottom: none; }
+    .badge-method { font-family: 'Consolas', monospace; font-size: 7.5pt; font-weight: bold; padding: 0.15rem 0.45rem; border-radius: 4px; min-width: 52px; text-align: center; flex-shrink: 0; }
+    .GET    { background: #dcfce7; color: #166534; }
+    .POST   { background: #dbeafe; color: #1e40af; }
+    .PUT    { background: #fef3c7; color: #92400e; }
+    .DELETE { background: #fee2e2; color: #991b1b; }
+    .ep-path { font-family: 'Consolas', monospace; font-weight: 600; color: var(--purple-deep); }
+    .ep-desc { color: var(--text-muted); font-size: 8.5pt; margin-left: auto; }
+    .badge-pub  { font-size: 7.5pt; background: #dcfce7; color: #166534; padding: 0.1rem 0.4rem; border-radius: 999px; flex-shrink: 0; }
+    .badge-prot { font-size: 7.5pt; background: #fee2e2; color: #991b1b; padding: 0.1rem 0.4rem; border-radius: 999px; flex-shrink: 0; }
+
+    figure { margin: 1.5rem auto; display: flex; flex-direction: column; align-items: center; text-align: center; width: 100%; page-break-inside: avoid; break-inside: avoid; }
+    figure img { max-width: 100%; height: auto; display: block; margin: 0 auto 0.4rem auto; border: 1.5px solid var(--border-light); border-radius: 6px; box-shadow: 0 2px 10px rgba(76,29,149,0.08); }
+    figcaption { font-size: 8.5pt; color: var(--text-muted); font-style: italic; margin-top: 0.4rem; text-align: center; width: 100%; }
+
+    .legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; margin: 0.8rem auto 1.2rem auto; font-size: 8.5pt; }
+    .leg-item { display: flex; align-items: center; gap: 0.35rem; padding: 0.2rem 0.7rem; border-radius: 999px; border: 1px solid var(--border-light); }
+    .leg-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+    .alert { padding: 0.7rem 1rem; border-radius: 6px; font-size: 9.5pt; margin: 0.8rem 0; page-break-inside: avoid; }
+    .alert-info    { background: #eff6ff; border-left: 4px solid var(--indigo); }
+    .alert-warning { background: #fffbeb; border-left: 4px solid #f59e0b; }
+    .alert-success { background: #f0fdf4; border-left: 4px solid #22c55e; }
+
+    .page-break { page-break-before: always; break-before: page; }
+
+    .code-block {
+      background: #0f172a; color: #f8fafc; padding: 0.9rem 1.1rem; border-radius: 8px;
+      font-family: 'Consolas', monospace; font-size: 7.5pt; line-height: 1.35;
+      margin: 1rem 0; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      page-break-inside: avoid; break-inside: avoid; overflow-x: auto;
+    }
+    .code-block pre { margin: 0; white-space: pre; word-break: normal; overflow-wrap: normal; }
+
+    .snippet {
+      background: var(--code-bg); border: 1px solid var(--border-light);
+      border-left: 4px solid var(--purple-mid); border-radius: 4px;
+      padding: 0.6rem 0.9rem; font-family: 'Consolas', monospace; font-size: 8.5pt;
+      line-height: 1.4; margin: 0.8rem 0; page-break-inside: avoid; break-inside: avoid;
+      white-space: pre; overflow-x: auto;
+    }
+
+    .json-box {
+      background: #1e293b; color: #94d2bd; border-radius: 6px; padding: 0.7rem 1rem;
+      font-family: 'Consolas', monospace; font-size: 8.5pt; line-height: 1.5;
+      margin: 0.5rem 0 1rem; page-break-inside: avoid; white-space: pre;
+    }
+    .json-key { color: #7dd3fc; }
+    .json-str { color: #94d2bd; }
+    .json-punct { color: #cbd5e1; }
+  </style>
+</head>
+
+<body>
+
+  <header id="doc-header">
+    <div>Programación Orientada a Objetos - POO &nbsp;|&nbsp; Facultad de Ingeniería (UNJu) &nbsp;|&nbsp; <span>Mg. Ing. Ariel Alejandro Vega</span></div>
+    <div style="color:#6d28d9; font-weight:bold;">IrisDual 3D — Backend API</div>
+  </header>
+
+  <footer id="doc-footer">
+    <div>Cussi Walter Leonel &nbsp;|&nbsp; DNI: 45.880.218 &nbsp;|&nbsp; LU: APU006422</div>
+    <div style="font-weight:bold; color:#475569;">Septiembre 2026</div>
+  </footer>
+
+  <main class="main-content">
+
+    <!-- CARATULA -->
+    <div class="cover">
+      <div class="cover-banner">
+        <div class="cover-logos">
+          <img class="logo-unju"   src="./Material para documentacion/logo_unju.jpeg"  alt="Logo UNJu">
+          <img class="logo-propio" src="./Material para documentacion/logo_propio.png" alt="Logo IrisDual 3D">
+        </div>
+        <h1>IrisDual 3D — Backend API REST</h1>
+        <p class="subtitle">Documentación Técnica Formal — Entrega Final</p>
+      </div>
+      <div class="cover-type-badge">Trabajo Práctico Integrador (TPI) — Analista Programador Universitario</div>
+      <div class="cover-body">
+        <div class="cover-block">
+          <table>
+            <tr><td>Materia</td><td>Programación Orientada a Objetos — POO</td></tr>
+            <tr><td>Institución</td><td>Facultad de Ingeniería — Universidad Nacional de Jujuy (UNJu)</td></tr>
+            <tr><td>Docente</td><td>Mg. Ing. Ariel Alejandro Vega</td></tr>
+          </table>
+        </div>
+        <div class="cover-block">
+          <table>
+            <tr><td>Alumno</td><td>Cussi Walter Leonel</td></tr>
+            <tr><td>DNI</td><td>45.880.218</td></tr>
+            <tr><td>Legajo Universitario</td><td>APU006422</td></tr>
+          </table>
+        </div>
+        <div class="cover-block">
+          <table>
+            <tr><td>Repositorio GitHub</td><td><a href="https://github.com/EnderJack379/irisdual3d-pedidos-api.git">github.com/EnderJack379/irisdual3d-pedidos-api</a></td></tr>
+            <tr><td>Período</td><td>Septiembre 2026</td></tr>
+            <tr><td>Artefacto Maven</td><td><code>com.irisdual / pedidos-api / 0.0.1-SNAPSHOT</code></td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCION 1 -->
+    <section class="section">
+      <h2>1. Resumen y Objetivos del Proyecto</h2>
+      <p><strong>IrisDual 3D Backend API</strong> es una solución de software orientada a servicios REST, desarrollada con <strong>Spring Boot 3.2.2</strong> sobre <strong>Java 17 LTS</strong>, destinada a gestionar integralmente las operaciones de un negocio de impresión 3D bajo demanda. El sistema provee un backend seguro, escalable y desacoplado para la administración de catálogos de piezas, categorías y pedidos de clientes.</p>
+      <p>La arquitectura implementada sigue el paradigma <strong>multicapa</strong> (Layered Architecture), garantizando la separación de responsabilidades entre la presentación, la lógica de negocio y el acceso a datos. La persistencia se resuelve mediante <strong>Spring Data JPA / Hibernate</strong> sobre <strong>MySQL 8.x</strong>, con mapeo objeto-relacional y generación de esquema mediante <code>ddl-auto=update</code>.</p>
+      <p>La seguridad de los endpoints está garantizada por <strong>Spring Security 6</strong> con autenticación <strong>stateless</strong> basada en <strong>JSON Web Tokens (JWT)</strong>, algoritmo <strong>HS256</strong>, expiración de 24 horas. Solo los endpoints de <code>/api/auth/**</code> son públicos; el resto requiere un token Bearer válido en cada petición.</p>
+      <p>La calidad del código se asegura con pruebas unitarias en <strong>JUnit 5</strong>, y el desarrollo se gestiona con <strong>Git y GitHub</strong> bajo la estrategia de <strong>Feature Branching</strong>. El build y la gestión de dependencias se realiza mediante <strong>Apache Maven 3.x</strong>.</p>
+      <h3>Objetivos Principales</h3>
+      <ul>
+        <li>Aplicar el paradigma de <strong>Programación Orientada a Objetos</strong> en un proyecto real y funcional.</li>
+        <li>Implementar una <strong>arquitectura en capas</strong> con separación de responsabilidades (SRP de SOLID).</li>
+        <li>Garantizar la <strong>seguridad stateless</strong> mediante JWT con Spring Security 6.</li>
+        <li>Demostrar el uso de <strong>patrones de diseño</strong>: DTO, Repository, Front Controller, Chain of Responsibility.</li>
+        <li>Validar la correcta integración entre capas mediante <strong>pruebas unitarias</strong> con JUnit 5.</li>
+        <li>Gestionar el ciclo de vida del proyecto con <strong>Git Feature Branching</strong> e Issues de GitHub.</li>
+      </ul>
+    </section>
+
+    <!-- SECCION 2 -->
+    <section class="section page-break">
+      <h2>2. Stack Tecnológico</h2>
+      <div class="stack-grid">
+        <div class="stack-card"><div class="sn">Java 17 LTS</div><div class="sv">Lenguaje base</div></div>
+        <div class="stack-card"><div class="sn">Spring Boot 3.2.2</div><div class="sv">Framework principal</div></div>
+        <div class="stack-card"><div class="sn">Spring Data JPA</div><div class="sv">ORM / Hibernate</div></div>
+        <div class="stack-card"><div class="sn">Spring Security 6</div><div class="sv">Control de acceso</div></div>
+        <div class="stack-card"><div class="sn">JJWT 0.11.5</div><div class="sv">Tokens HS256</div></div>
+        <div class="stack-card"><div class="sn">MapStruct 1.5.5</div><div class="sv">Mapeo de DTOs</div></div>
+        <div class="stack-card"><div class="sn">MySQL 8.x</div><div class="sv">Base de datos</div></div>
+        <div class="stack-card"><div class="sn">Maven 3.x</div><div class="sv">Build y dependencias</div></div>
+        <div class="stack-card"><div class="sn">JUnit 5</div><div class="sv">Pruebas unitarias</div></div>
+        <div class="stack-card"><div class="sn">Spring Security Test</div><div class="sv">Testing de seguridad</div></div>
+        <div class="stack-card"><div class="sn">Spring DevTools</div><div class="sv">Recarga automática</div></div>
+        <div class="stack-card"><div class="sn">Git &amp; GitHub</div><div class="sv">Feature Branching</div></div>
+      </div>
+      <h3>Dependencias declaradas en <code>pom.xml</code></h3>
+      <table>
+        <thead><tr><th>Dependencia (artifactId)</th><th>Versión</th><th>Alcance</th><th>Propósito</th></tr></thead>
+        <tbody>
+          <tr><td><code>spring-boot-starter-web</code></td><td>3.2.2</td><td>compile</td><td>API REST con Spring MVC</td></tr>
+          <tr><td><code>spring-boot-starter-data-jpa</code></td><td>3.2.2</td><td>compile</td><td>Persistencia con Hibernate</td></tr>
+          <tr><td><code>spring-boot-starter-security</code></td><td>3.2.2</td><td>compile</td><td>Autenticación y autorización</td></tr>
+          <tr><td><code>mysql-connector-j</code></td><td>8.x</td><td>runtime</td><td>Driver JDBC MySQL</td></tr>
+          <tr><td><code>jjwt-api / jjwt-impl / jjwt-jackson</code></td><td>0.11.5</td><td>compile/runtime</td><td>Generación y validación JWT (HS256)</td></tr>
+          <tr><td><code>mapstruct</code></td><td>1.5.5.Final</td><td>compile</td><td>Generación de mappers entidad-DTO</td></tr>
+          <tr><td><code>mapstruct-processor</code></td><td>1.5.5.Final</td><td>annotationProcessor</td><td>Procesador APT para código de mapeo</td></tr>
+          <tr><td><code>spring-boot-devtools</code></td><td>3.2.2</td><td>runtime/optional</td><td>Recarga automática en desarrollo</td></tr>
+          <tr><td><code>spring-boot-starter-test</code></td><td>3.2.2</td><td>test</td><td>JUnit 5 + Mockito</td></tr>
+          <tr><td><code>spring-security-test</code></td><td>3.2.2</td><td>test</td><td>Utilitarios de prueba para Spring Security</td></tr>
+        </tbody>
+      </table>
+      <div class="alert alert-info">
+        <strong>Nota sobre Lombok:</strong> Lombok 1.18.30 está declarado en el <code>pom.xml</code> pero <strong>no se utiliza en las entidades JPA</strong>. Spring Tool Suite 5.3.0 (Java 25 / OpenJDK) presenta incompatibilidad con Lombok como agente (<code>-javaagent</code>), por lo que los getters y setters se declaran manualmente. Esta decisión garantiza compilación limpia con el compilador ECJ.
+      </div>
+    </section>
+
+    <!-- SECCION 3 -->
+    <section class="section page-break">
+      <h2>3. Patrones de Diseño y Arquitectura de Capas</h2>
+      <p>El proyecto implementa una <strong>arquitectura multicapa</strong> basada en la separación estricta de responsabilidades (principio SRP de SOLID). Cada paquete del proyecto representa una capa con un patrón de diseño asociado:</p>
+      <div class="arch-layers">
+        <div class="arch-row row-c"><div><span class="alabel">🌐 controller</span> — Patrón <em>Front Controller</em></div><div class="detail">@RestController · ResponseEntity&lt;T&gt;</div></div>
+        <div class="arch-row row-sec"><div><span class="alabel">🔒 security</span> — <em>Chain of Responsibility</em> · Stateless JWT</div><div class="detail">JwtFilter · JwtService · AppConfig · SecurityConfig</div></div>
+        <div class="arch-row row-s"><div><span class="alabel">⚙️ service</span> — Principio SRP · Lógica de Negocio</div><div class="detail">@Service · Interfaces + Implementaciones</div></div>
+        <div class="arch-row row-d"><div><span class="alabel">🔄 dto + mapper</span> — Patrón <em>DTO</em> con MapStruct</div><div class="detail">Previene LazyInitializationException · Compilación automática</div></div>
+        <div class="arch-row row-r"><div><span class="alabel">🗄️ repository</span> — Patrón <em>Repository</em></div><div class="detail">JpaRepository&lt;T,ID&gt; · Implementación automática Spring Data</div></div>
+        <div class="arch-row row-e"><div><span class="alabel">📦 entity</span> — Mapeo ORM · Sin Lombok (ECJ)</div><div class="detail">@Entity · @Table · Getters/Setters manuales</div></div>
+        <div class="arch-row row-db"><div><span class="alabel">🐬 MySQL 8.x</span> — Base de datos relacional</div><div class="detail">irisdual_db · ddl-auto=update</div></div>
+      </div>
+      <h3>Decisión de diseño: Sin Lombok en entidades</h3>
+      <p>Las entidades JPA no utilizan Lombok. <strong>Spring Tool Suite 5.3.0</strong> utiliza internamente <strong>Java 25 (OpenJDK)</strong>, con la cual Lombok 1.18.30 no es compatible como agente (<code>-javaagent</code>). Los getters y setters se declaran manualmente. Ejemplo en <code>Categoria.java</code>:</p>
+      <div class="snippet">@Entity
+@Table(name = "categorias")
+public class Categoria {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "cat_id")
+    private Integer id;
+
+    @Column(name = "cat_nombre", nullable = false, length = 50)
+    private String nombreCategoria;
+
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
+    public String getNombreCategoria() { return nombreCategoria; }
+    public void setNombreCategoria(String v) { this.nombreCategoria = v; }
+}</div>
+      <h3>Patrón DTO y MapStruct</h3>
+      <p><code>PiezaDTO</code> aplana la relación <code>@ManyToOne(LAZY)</code> con <code>Categoria</code> evitando <code>LazyInitializationException</code> al serializar fuera de transacción JPA. La regla de mapeo en <code>PiezaMapper</code> es: <code>@Mapping(target = "nombreCategoria", source = "categoria.nombreCategoria")</code>. MapStruct genera el código de conversión en tiempo de compilación sin reflexión en runtime.</p>
+      <h3>Arquitectura Stateless con JWT — Flujo completo</h3>
+      <p><code>SessionCreationPolicy.STATELESS</code> garantiza que el servidor no mantenga sesión HTTP. <code>JwtFilter</code> extiende <code>OncePerRequestFilter</code>, intercepta el header <code>Authorization: Bearer &lt;token&gt;</code>, extrae el email del subject, valida la firma HS256 y establece el contexto en <code>SecurityContextHolder</code>. Si el token es inválido o ausente, Spring Security deniega el acceso con <strong>403 Forbidden</strong>.</p>
+      <p>La clase <code>AppConfig</code> (@Configuration) define cuatro beans críticos: <code>UserDetailsService</code> (carga usuario desde <code>IUsuarioRepository</code>), <code>BCryptPasswordEncoder</code> (hash de contraseñas), <code>DaoAuthenticationProvider</code> y <code>AuthenticationManager</code>.</p>
+      <h3>Configuración del SecurityFilterChain</h3>
+      <div class="snippet">http
+  .csrf(csrf -> csrf.disable())
+  .authorizeHttpRequests(auth -> auth
+      .requestMatchers("/api/auth/**").permitAll()
+      .anyRequest().authenticated()
+  )
+  .sessionManagement(session -> session
+      .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+  )
+  .authenticationProvider(authenticationProvider)
+  .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);</div>
+    </section>
+
+    <!-- SECCION 4 -->
+    <section class="section page-break">
+      <h2>4. Diagrama UML de Clases</h2>
+      <p>El siguiente diagrama modela la arquitectura completa del sistema: clases, interfaces, relaciones de herencia, implementación y asociaciones entre capas.</p>
+      <figure>
+        <img src="./Material para documentacion/01_Diagrama_UML_Arquitectura.svg" alt="Diagrama UML de Clases — IrisDual 3D Backend API" style="max-width:100%; display:block; margin: 1rem auto;">
+        <figcaption>Figura 1 — Diagrama de Clases UML completo · IrisDual 3D Backend API</figcaption>
+      </figure>
+      <h3>Leyenda de colores por capa</h3>
+      <div class="legend">
+        <div class="leg-item"><span class="leg-dot" style="background:#60a5fa;"></span>Azul — Entidades JPA</div>
+        <div class="leg-item"><span class="leg-dot" style="background:#4ade80;"></span>Verde — Repositorios</div>
+        <div class="leg-item"><span class="leg-dot" style="background:#facc15;"></span>Amarillo — Servicios</div>
+        <div class="leg-item"><span class="leg-dot" style="background:#fb923c;"></span>Naranja — Controladores</div>
+        <div class="leg-item"><span class="leg-dot" style="background:#c084fc;"></span>Violeta — Seguridad</div>
+      </div>
+      <table>
+        <thead><tr><th>Capa</th><th>Clases / Interfaces</th><th>Patrón</th></tr></thead>
+        <tbody>
+          <tr><td>Entidades</td><td><code>Categoria, Pieza, Pedido, Usuario, Rol</code></td><td>Active Record / ORM</td></tr>
+          <tr><td>Repositorios</td><td><code>CategoriaRepository, PiezaRepository, PedidoRepository, IUsuarioRepository</code></td><td>Repository</td></tr>
+          <tr><td>Servicios</td><td><code>IPiezaService, PiezaServiceImp, IPedidoService, PedidoServiceImp, AuthService</code></td><td>Service Layer / SRP</td></tr>
+          <tr><td>DTOs / Mappers</td><td><code>PiezaDTO, PedidoDTO, PiezaMapper, PedidoMapper, dto.auth.*</code></td><td>DTO Pattern</td></tr>
+          <tr><td>Controladores</td><td><code>CategoriaController, PiezaController, PedidoController, AuthController</code></td><td>Front Controller</td></tr>
+          <tr><td>Seguridad</td><td><code>JwtService, JwtFilter, AppConfig, SecurityConfig</code></td><td>Chain of Responsibility</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- SECCION 5 -->
+    <section class="section page-break">
+      <h2>5. Modelo de Datos y Persistencia Relacional</h2>
+      <p>Hibernate genera automáticamente el esquema mediante <code>ddl-auto=update</code>. El modelo consta de cinco entidades con las siguientes relaciones:</p>
+      <table>
+        <thead><tr><th>Entidad</th><th>Tabla</th><th>Atributos Clave</th><th>Relación JPA</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Categoria</strong></td><td><code>categorias</code></td><td><code>cat_id</code> PK, <code>cat_nombre</code> NOT NULL (50)</td><td>—</td></tr>
+          <tr><td><strong>Pieza</strong></td><td><code>piezas</code></td><td><code>pieza_id</code>, <code>nombre</code>, <code>precio</code>, <code>stock</code></td><td><code>@ManyToOne(LAZY)</code> → <code>categorias</code></td></tr>
+          <tr><td><strong>Pedido</strong></td><td><code>pedidos</code></td><td><code>ped_id</code>, <code>nombre_cliente</code>, <code>fecha_pedido</code> (@PrePersist)</td><td><code>@ManyToMany(LAZY)</code> via <code>pedidos_piezas</code></td></tr>
+          <tr><td><strong>Rol</strong></td><td><code>roles</code></td><td><code>id</code> PK, <code>nombre_rol</code></td><td>—</td></tr>
+          <tr><td><strong>Usuario</strong></td><td><code>usuarios</code></td><td><code>id</code>, <code>email</code>, <code>password</code> (BCrypt hash)</td><td><code>@ManyToMany(EAGER)</code> via <code>usuarios_roles</code></td></tr>
+        </tbody>
+      </table>
+      <h3>Tablas intermedias generadas automáticamente</h3>
+      <table>
+        <thead><tr><th>Tabla</th><th>FK A</th><th>FK B</th><th>Relación</th></tr></thead>
+        <tbody>
+          <tr><td><code>pedidos_piezas</code></td><td><code>pedido_id</code></td><td><code>pieza_id</code></td><td>Pedido N:N Pieza</td></tr>
+          <tr><td><code>usuarios_roles</code></td><td><code>usuario_id</code></td><td><code>rol_id</code></td><td>Usuario N:N Rol</td></tr>
+        </tbody>
+      </table>
+      <h3>Configuración de conexión (<code>application.properties</code>)</h3>
+      <div class="snippet">spring.datasource.url=jdbc:mysql://localhost:3306/irisdual_db
+spring.datasource.username=TU_USUARIO
+spring.datasource.password=TU_CONTRASEÑA
+spring.jpa.show-sql=true
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.open-in-view=true</div>
+      <h3>Diagrama Entidad-Relación (DER)</h3>
+      <figure>
+        <img src="./Material para documentacion/02_Diagrama_DER_MySQL.png" alt="Diagrama DER — MySQL Workbench" style="max-width:100%; display:block; margin: 1rem auto;">
+        <figcaption>Figura 2 — Diagrama Entidad-Relación (DER) · Base de datos <code>irisdual_db</code></figcaption>
+      </figure>
+    </section>
+
+    <!-- SECCION 6 -->
+    <section class="section page-break">
+      <h2>6. Historias de Usuario y Gestión Ágil</h2>
+      <p>El desarrollo fue organizado en cuatro Historias de Usuario, cada una con su rama en GitHub y criterios de aceptación verificados con Postman y JUnit 5.</p>
+      <table>
+        <thead><tr><th>Historia</th><th>Módulo</th><th>Horas est.</th><th>Iteración</th><th>Descripción breve</th></tr></thead>
+        <tbody>
+          <tr><td><strong>HU001</strong></td><td>Persistencia de Catálogo</td><td>4 h</td><td>1</td><td>Registro de categorías y piezas; ORM sin Lombok; generación de esquema.</td></tr>
+          <tr><td><strong>HU002</strong></td><td>Listado y DTOs de Piezas</td><td>3 h</td><td>1</td><td>API de consulta del catálogo con patrón DTO + MapStruct.</td></tr>
+          <tr><td><strong>HU003</strong></td><td>Gestión de Pedidos y Excepciones</td><td>4 h</td><td>2</td><td>Pedidos N:M con piezas, manejo global de errores, pruebas assertThrows.</td></tr>
+          <tr><td><strong>HU004</strong></td><td>Seguridad JWT</td><td>6 h</td><td>2</td><td>Autenticación stateless; JwtFilter; SecurityFilterChain; roles de usuario.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="hu-wrapper">
+        <table class="hu-table">
+          <tr><td><strong>Código:</strong> HU001</td><td><strong>Usuario:</strong> Administrador</td></tr>
+          <tr><td colspan="2"><strong>Nombre de la Historia de Usuario:</strong> Persistencia de Catálogo</td></tr>
+          <tr><td><strong>Prioridad:</strong> Alta</td><td><strong>Riesgo de desarrollo:</strong> Bajo</td></tr>
+          <tr><td><strong>Estimación:</strong> 4 horas</td><td><strong>Iteración Asignada:</strong> 1</td></tr>
+          <tr><td colspan="2"><strong>Responsable:</strong> Walter Leonel Cussi</td></tr>
+          <tr><td colspan="2"><strong>Descripción:</strong> Como admin quiero registrar categorías y piezas para mantener el catálogo.</td></tr>
+          <tr><td colspan="2">
+            <p><strong>Enfoque/Objetivos:</strong> Modelar el ORM sin Lombok y generar el esquema en BD.</p>
+            <p><strong>Tareas:</strong><br>1. Modelar Categoria y Pieza con getters/setters manuales.<br>2. Configurar Hibernate (ddl-auto=update).<br>3. Crear repositorios JpaRepository.</p>
+            <p><strong>Criterios de aceptación:</strong><br>1. Tablas generadas automáticamente en irisdual_db.<br>2. Prueba unitaria de inyección superada.</p>
+            <p><strong>División de tareas:</strong> Base de Datos / Backend</p>
+          </td></tr>
+          <tr><td colspan="2"><strong>Observaciones:</strong> Usar getters/setters manuales por compatibilidad con ECJ (STS 5.3.0). ddl-auto=update genera tablas al arrancar la app.</td></tr>
+        </table>
+      </div>
+
+      <div class="hu-wrapper">
+        <table class="hu-table">
+          <tr><td><strong>Código:</strong> HU002</td><td><strong>Usuario:</strong> Cliente</td></tr>
+          <tr><td colspan="2"><strong>Nombre de la Historia de Usuario:</strong> Listado y DTOs de Piezas</td></tr>
+          <tr><td><strong>Prioridad:</strong> Alta</td><td><strong>Riesgo de desarrollo:</strong> Bajo</td></tr>
+          <tr><td><strong>Estimación:</strong> 3 horas</td><td><strong>Iteración Asignada:</strong> 1</td></tr>
+          <tr><td colspan="2"><strong>Responsable:</strong> Walter Leonel Cussi</td></tr>
+          <tr><td colspan="2"><strong>Descripción:</strong> Como cliente quiero consultar el catálogo viendo nombre, precio, stock y categoría.</td></tr>
+          <tr><td colspan="2">
+            <p><strong>Enfoque/Objetivos:</strong> Implementar patrón DTO para desacoplar el modelo físico de la presentación.</p>
+            <p><strong>Tareas:</strong><br>1. Crear clases DTO (PiezaDTO, PedidoDTO).<br>2. Configurar MapStruct con @Mapping para relaciones LAZY.<br>3. Desarrollar PiezaController con endpoints GET.</p>
+            <p><strong>Criterios de aceptación:</strong><br>1. El endpoint devuelve JSON sin exponer el modelo físico.<br>2. Sin errores de LazyInitializationException.<br>3. Postman recibe 200 OK con datos correctos.</p>
+            <p><strong>División de tareas:</strong> Backend / API REST</p>
+          </td></tr>
+          <tr><td colspan="2"><strong>Observaciones:</strong> El mapeo de categoria.nombreCategoria en PiezaDTO previene recursividad y serialización fallida de entidades con relaciones LAZY.</td></tr>
+        </table>
+      </div>
+
+      <div style="page-break-after: always; break-after: page;"></div>
+
+      <div class="hu-wrapper">
+        <table class="hu-table">
+          <tr><td><strong>Código:</strong> HU003</td><td><strong>Usuario:</strong> Cliente</td></tr>
+          <tr><td colspan="2"><strong>Nombre de la Historia de Usuario:</strong> Gestión de Pedidos y Excepciones</td></tr>
+          <tr><td><strong>Prioridad:</strong> Alta</td><td><strong>Riesgo de desarrollo:</strong> Medio</td></tr>
+          <tr><td><strong>Estimación:</strong> 4 horas</td><td><strong>Iteración Asignada:</strong> 2</td></tr>
+          <tr><td colspan="2"><strong>Responsable:</strong> Walter Leonel Cussi</td></tr>
+          <tr><td colspan="2"><strong>Descripción:</strong> Como cliente quiero generar pedidos con múltiples piezas y ver errores claros si algo falla.</td></tr>
+          <tr><td colspan="2">
+            <p><strong>Enfoque/Objetivos:</strong> Resolver relación N:M transaccional y capturar errores globales con mensajes semánticos.</p>
+            <p><strong>Tareas:</strong><br>1. Modelar Pedido con relación @ManyToMany a Pieza.<br>2. Implementar PedidoServiceImp con @Transactional.<br>3. Crear ControllerAdvice para manejo global de excepciones.<br>4. Escribir pruebas con assertThrows para casos de error.</p>
+            <p><strong>Criterios de aceptación:</strong><br>1. Se insertan datos en tabla intermedia pedidos_piezas.<br>2. El sistema devuelve 404 semántico si la pieza no existe.<br>3. @PrePersist establece fecha_pedido automáticamente.</p>
+            <p><strong>División de tareas:</strong> Base de Datos / Backend</p>
+          </td></tr>
+          <tr><td colspan="2"><strong>Observaciones:</strong> Servicio anotado con @Transactional a nivel de clase para garantizar contexto JPA activo en toda la operación.</td></tr>
+        </table>
+      </div>
+
+      <div class="hu-wrapper">
+        <table class="hu-table">
+          <tr><td><strong>Código:</strong> HU004</td><td><strong>Usuario:</strong> Administrador</td></tr>
+          <tr><td colspan="2"><strong>Nombre de la Historia de Usuario:</strong> Seguridad JWT</td></tr>
+          <tr><td><strong>Prioridad:</strong> Alta</td><td><strong>Riesgo de desarrollo:</strong> Alto</td></tr>
+          <tr><td><strong>Estimación:</strong> 6 horas</td><td><strong>Iteración Asignada:</strong> 2</td></tr>
+          <tr><td colspan="2"><strong>Responsable:</strong> Walter Leonel Cussi</td></tr>
+          <tr><td colspan="2"><strong>Descripción:</strong> Como admin quiero restringir la API para que solo usuarios registrados operen.</td></tr>
+          <tr><td colspan="2">
+            <p><strong>Enfoque/Objetivos:</strong> Implementar autenticación stateless con filtros HTTP y JWT.</p>
+            <p><strong>Tareas:</strong><br>1. Modelar Usuario y Rol implementando UserDetails.<br>2. Crear JwtService con JJWT 0.11.5 (HS256, 24 h).<br>3. Implementar JwtFilter extendiendo OncePerRequestFilter.<br>4. Configurar SecurityFilterChain con lambda DSL de Spring Security 6.</p>
+            <p><strong>Criterios de aceptación:</strong><br>1. POST /api/auth/register y /authenticate retornan 200 OK con token.<br>2. Endpoints protegidos devuelven 403 Forbidden sin token Bearer.<br>3. Endpoints protegidos retornan 200 OK con token válido.</p>
+            <p><strong>División de tareas:</strong> Seguridad / Backend</p>
+          </td></tr>
+          <tr><td colspan="2"><strong>Observaciones:</strong> JwtFilter extiende OncePerRequestFilter para ejecución única por petición. Clave secreta HS256 de 256 bits en Base64. Contraseñas hasheadas con BCryptPasswordEncoder.</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECCION 7 -->
+    <section class="section page-break">
+      <h2>7. Aseguramiento de Calidad — Testing con JUnit 5</h2>
+      <p>Las pruebas unitarias implementadas con <strong>JUnit 5</strong> verifican el correcto funcionamiento del contexto de Spring, la inyección de dependencias, la integridad de transacciones JPA y el comportamiento ante entradas inválidas.</p>
+      <h3>Pruebas implementadas en <code>PedidosApiApplicationTests</code></h3>
+      <table>
+        <thead><tr><th>Método de prueba</th><th>Descripción</th><th>Assertion</th><th>Resultado</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>verificarInyeccionRepositorio()</code></td>
+            <td>Verifica que el contexto de Spring levanta correctamente y el repositorio de pedidos está inyectado por @Autowired.</td>
+            <td><code>assertNotNull(pedidoRepository)</code></td>
+            <td>✅ PASS</td>
+          </tr>
+          <tr>
+            <td><code>verificarConsultasPedido()</code></td>
+            <td>Valida que la consulta general de pedidos se ejecuta sin lanzar excepciones de Hibernate (LazyInitializationException, etc.).</td>
+            <td><code>assertDoesNotThrow(() -&gt; pedidoService.getAllPedidos())</code></td>
+            <td>✅ PASS</td>
+          </tr>
+        </tbody>
+      </table>
+      <ul>
+        <li>Carga correcta del contexto de aplicación (<code>@SpringBootTest</code>)</li>
+        <li>Correcta inyección de repositorios y servicios vía <code>@Autowired</code></li>
+        <li>Ausencia de errores de serialización JPA en consultas reales</li>
+        <li>Propagación de excepciones desde la capa de servicio hacia el controlador</li>
+      </ul>
+      <figure>
+        <img src="./Material para documentacion/03_Test_Unitarios_JUnit5.png" alt="Resultados pruebas JUnit 5" style="max-width:100%; display:block; margin: 1rem auto;">
+        <figcaption>Figura 3 — Resultados de ejecución de pruebas unitarias con JUnit 5 · Spring Tool Suite</figcaption>
+      </figure>
+      <div class="alert alert-success">
+        <strong>Resultado:</strong> Todas las pruebas definidas pasaron exitosamente. El contexto de Spring levanta sin errores y las validaciones responden según los criterios de aceptación de cada Historia de Usuario. El uso de <code>@Transactional</code> a nivel de clase en <code>PedidoServiceImp</code> garantiza que las operaciones JPA con relaciones LAZY se ejecuten dentro de un contexto de sesión válido.
+      </div>
+    </section>
+
+    <!-- SECCION 8 -->
+    <section class="section page-break">
+      <h2>8. Endpoints, Contratos de API y Evidencias de Seguridad</h2>
+      <h3>Autenticación — Rutas Públicas (<code>/api/auth/**</code>)</h3>
+      <div class="endpoint-list">
+        <div class="ep"><span class="badge-method POST">POST</span><span class="ep-path">/api/auth/register</span><span class="badge-pub">público</span><span class="ep-desc">Registra usuario y devuelve token JWT</span></div>
+        <div class="ep"><span class="badge-method POST">POST</span><span class="ep-path">/api/auth/authenticate</span><span class="badge-pub">público</span><span class="ep-desc">Login — devuelve token JWT</span></div>
+      </div>
+      <p><strong>Body de request (JSON) para ambos endpoints:</strong></p>
+      <div class="json-box"><span class="json-punct">{</span>
+  <span class="json-key">"email"</span><span class="json-punct">:</span>    <span class="json-str">"usuario@ejemplo.com"</span><span class="json-punct">,</span>
+  <span class="json-key">"password"</span><span class="json-punct">:</span> <span class="json-str">"contraseña123"</span>
+<span class="json-punct">}</span></div>
+      <p><strong>Respuesta esperada — AuthResponse:</strong></p>
+      <div class="json-box"><span class="json-punct">{</span>
+  <span class="json-key">"token"</span><span class="json-punct">:</span> <span class="json-str">"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c3VhcmlvQGVqZW1wbG8uY29tIi4uLn0.FIRMA"</span>
+<span class="json-punct">}</span></div>
+      <h3>Categorías — Requieren Bearer Token</h3>
+      <div class="endpoint-list">
+        <div class="ep"><span class="badge-method GET">GET</span><span class="ep-path">/api/categorias</span><span class="badge-prot">protegido</span><span class="ep-desc">Lista todas las categorías</span></div>
+        <div class="ep"><span class="badge-method POST">POST</span><span class="ep-path">/api/categorias</span><span class="badge-prot">protegido</span><span class="ep-desc">Crea nueva categoría</span></div>
+      </div>
+      <h3>Piezas — Requieren Bearer Token</h3>
+      <div class="endpoint-list">
+        <div class="ep"><span class="badge-method GET">GET</span><span class="ep-path">/api/piezas</span><span class="badge-prot">protegido</span><span class="ep-desc">Lista piezas (retorna PiezaDTO)</span></div>
+        <div class="ep"><span class="badge-method GET">GET</span><span class="ep-path">/api/piezas/categoria/{id}</span><span class="badge-prot">protegido</span><span class="ep-desc">Filtra piezas por categoría</span></div>
+        <div class="ep"><span class="badge-method POST">POST</span><span class="ep-path">/api/piezas</span><span class="badge-prot">protegido</span><span class="ep-desc">Crea una pieza</span></div>
+        <div class="ep"><span class="badge-method POST">POST</span><span class="ep-path">/api/piezas/lote</span><span class="badge-prot">protegido</span><span class="ep-desc">Carga masiva de piezas (batch)</span></div>
+        <div class="ep"><span class="badge-method PUT">PUT</span><span class="ep-path">/api/piezas/{id}</span><span class="badge-prot">protegido</span><span class="ep-desc">Actualiza pieza existente</span></div>
+        <div class="ep"><span class="badge-method DELETE">DELETE</span><span class="ep-path">/api/piezas/{id}</span><span class="badge-prot">protegido</span><span class="ep-desc">Elimina pieza · 204 No Content</span></div>
+      </div>
+      <h3>Pedidos — Requieren Bearer Token</h3>
+      <div class="endpoint-list">
+        <div class="ep"><span class="badge-method GET">GET</span><span class="ep-path">/api/pedidos</span><span class="badge-prot">protegido</span><span class="ep-desc">Lista pedidos (retorna PedidoDTO)</span></div>
+        <div class="ep"><span class="badge-method GET">GET</span><span class="ep-path">/api/pedidos/{id}</span><span class="badge-prot">protegido</span><span class="ep-desc">Obtiene pedido por ID</span></div>
+        <div class="ep"><span class="badge-method POST">POST</span><span class="ep-path">/api/pedidos</span><span class="badge-prot">protegido</span><span class="ep-desc">Crea pedido con lista de piezas</span></div>
+        <div class="ep"><span class="badge-method PUT">PUT</span><span class="ep-path">/api/pedidos/{id}</span><span class="badge-prot">protegido</span><span class="ep-desc">Actualiza pedido y sus piezas</span></div>
+        <div class="ep"><span class="badge-method DELETE">DELETE</span><span class="ep-path">/api/pedidos/{id}</span><span class="badge-prot">protegido</span><span class="ep-desc">Elimina pedido · 204 No Content</span></div>
+      </div>
+      <div class="alert alert-info">
+        <strong>Uso del token JWT:</strong> Incluir el token en el header de cada petición protegida:<br>
+        <code>Authorization: Bearer eyJhbGciOiJIUzI1NiJ9...</code>
+      </div>
+      <h3>Evidencias en Postman</h3>
+      <figure>
+        <img src="./Material para documentacion/04_Postman_Generacion_JWT_200.png" alt="Postman — 200 OK con JWT" style="max-width:100%; display:block; margin: 1rem auto;">
+        <figcaption>Figura 4 — POST /api/auth/authenticate · Respuesta 200 OK con token JWT generado</figcaption>
+      </figure>
+      <figure>
+        <img src="./Material para documentacion/05_Postman_Acceso_Denegado_403.png" alt="Postman — 403 Forbidden sin token" style="max-width:100%; display:block; margin: 1rem auto;">
+        <figcaption>Figura 5 — Endpoint protegido sin token · Respuesta 403 Forbidden</figcaption>
+      </figure>
+      <figure>
+        <img src="./Material para documentacion/06_Postman_Consumo_Bearer_200.png" alt="Postman — 200 OK con Bearer Token" style="max-width:100%; display:block; margin: 1rem auto;">
+        <figcaption>Figura 6 — Endpoint con Authorization: Bearer válido · Respuesta 200 OK</figcaption>
+      </figure>
+    </section>
+
+    <!-- SECCION 9 -->
+    <section class="section page-break">
+      <h2>9. Gestión de Versiones — Git &amp; GitHub</h2>
+      <p>El proyecto adoptó la estrategia de <strong>Feature Branching</strong>. Cada Historia de Usuario fue desarrollada en una rama dedicada, garantizando que <code>main</code> siempre contenga código estable y aprobado mediante Pull Request.</p>
+      <table>
+        <thead><tr><th>Rama</th><th>Propósito</th><th>Criterio de merge</th></tr></thead>
+        <tbody>
+          <tr><td><code>main</code></td><td>Rama principal estable y entregable.</td><td>Solo recibe merges de features completadas y aprobadas.</td></tr>
+          <tr><td><code>feature/hu001</code></td><td>Persistencia de catálogo — entidades y repositorios.</td><td>Tablas generadas + prueba unitaria OK.</td></tr>
+          <tr><td><code>feature/hu002</code></td><td>DTOs y endpoints de piezas.</td><td>200 OK en Postman sin LazyInit.</td></tr>
+          <tr><td><code>feature/hu003</code></td><td>Pedidos con relación N:M y manejo de excepciones.</td><td>INSERT en pedidos_piezas + 404 semántico.</td></tr>
+          <tr><td><code>feature/hu004</code></td><td>Seguridad JWT stateless.</td><td>403 sin token + 200 con token Bearer.</td></tr>
+        </tbody>
+      </table>
+      <ul>
+        <li>Cada commit está referenciado a su Issue de GitHub para trazabilidad completa.</li>
+        <li>Los Pull Requests documentan las decisiones técnicas de cada iteración.</li>
+        <li>El tablero Kanban de GitHub Projects refleja el estado de cada Historia de Usuario.</li>
+      </ul>
+      <div class="alert alert-info">
+        <strong>Beneficio del Feature Branching:</strong> Esta estrategia permite desarrollo aislado por funcionalidad, facilita la revisión de código y asegura que cada entrega esté alineada con una Historia de Usuario verificada con sus criterios de aceptación.
+      </div>
+      <h3>Network Graph — Ramas de desarrollo</h3>
+      <figure>
+        <img src="./Material para documentacion/07_GitHub_Network_Graph.png" alt="GitHub Network Graph" style="max-width:100%; display:block; margin: 1rem auto;">
+        <figcaption>Figura 7 — Network Graph · Historial de ramas por Historia de Usuario</figcaption>
+      </figure>
+      <h3>Trazabilidad mediante Issues</h3>
+      <figure>
+        <img src="./Material para documentacion/08_GitHub_Issue_Trazabilidad.png" alt="GitHub Issues — Trazabilidad" style="max-width:100%; display:block; margin: 1rem auto;">
+        <figcaption>Figura 8 — Issues de GitHub · Trazabilidad entre tareas, commits y criterios de aceptación</figcaption>
+      </figure>
+      <h3>Tablero Kanban de gestión</h3>
+      <figure>
+        <img src="./Material para documentacion/09_GitHub_Tablero_Kanban.png" alt="GitHub Projects — Tablero Kanban" style="max-width:100%; display:block; margin: 1rem auto;">
+        <figcaption>Figura 9 — GitHub Projects · Tablero Kanban de seguimiento de Historias de Usuario</figcaption>
+      </figure>
+    </section>
+
+    <!-- SECCION 10 -->
+    <section class="section page-break">
+      <h2>10. Estructura de Archivos y Organización del Proyecto</h2>
+      <p>A continuación se detalla la estructura de paquetes, clases Java, recursos y configuraciones que conforman la arquitectura backend de <strong>IrisDual 3D API</strong> (excluyendo artefactos de compilación):</p>
+      <div class="code-block">
+<pre>pedidos-api/
+&#9500;&#9472;&#9472; pom.xml                                     <span style="color:#94a3b8;"># Dependencias Maven (Spring Boot 3.2.2, MapStruct, JJWT)</span>
+&#9492;&#9472;&#9472; src/
+    &#9500;&#9472;&#9472; main/
+    &#9474;   &#9500;&#9472;&#9472; java/com/irisdual/pedidos_api/
+    &#9474;   &#9474;   &#9500;&#9472;&#9472; PedidosApiApplication.java      <span style="color:#94a3b8;"># Clase de inicio (@SpringBootApplication)</span>
+    &#9474;   &#9474;   &#9500;&#9472;&#9472; config/SecurityConfig.java     <span style="color:#94a3b8;"># Placeholder (reemplazado por security/SecurityConfig)</span>
+    &#9474;   &#9474;   &#9500;&#9472;&#9472; controller/                    <span style="color:#94a3b8;"># Endpoints REST API</span>
+    &#9474;   &#9474;   &#9474;   &#9500;&#9472;&#9472; AuthController.java         <span style="color:#94a3b8;"># POST /api/auth/register y /authenticate</span>
+    &#9474;   &#9474;   &#9474;   &#9500;&#9472;&#9472; CategoriaController.java    <span style="color:#94a3b8;"># CRUD de Categorias</span>
+    &#9474;   &#9474;   &#9474;   &#9500;&#9472;&#9472; PedidoController.java       <span style="color:#94a3b8;"># Gestion de Pedidos (CRUD completo)</span>
+    &#9474;   &#9474;   &#9474;   &#9492;&#9472;&#9472; PiezaController.java        <span style="color:#94a3b8;"># Gestion de Piezas 3D (CRUD + batch)</span>
+    &#9474;   &#9474;   &#9500;&#9472;&#9472; dto/                           <span style="color:#94a3b8;"># Objetos de Transferencia de Datos</span>
+    &#9474;   &#9474;   &#9474;   &#9500;&#9472;&#9472; PedidoDTO.java
+    &#9474;   &#9474;   &#9474;   &#9500;&#9472;&#9472; PiezaDTO.java               <span style="color:#94a3b8;"># Aplana relacion LAZY con Categoria</span>
+    &#9474;   &#9474;   &#9474;   &#9500;&#9472;&#9472; auth/
+    &#9474;   &#9474;   &#9474;   &#9474;   &#9500;&#9472;&#9472; AuthRequest.java        <span style="color:#94a3b8;"># {email, password} - Login</span>
+    &#9474;   &#9474;   &#9474;   &#9474;   &#9500;&#9472;&#9472; AuthResponse.java       <span style="color:#94a3b8;"># {token} - Respuesta JWT</span>
+    &#9474;   &#9474;   &#9474;   &#9474;   &#9492;&#9472;&#9472; RegisterRequest.java    <span style="color:#94a3b8;"># {email, password} - Registro</span>
+    &#9474;   &#9474;   &#9474;   &#9492;&#9472;&#9472; mapper/
+    &#9474;   &#9474;   &#9474;       &#9500;&#9472;&#9472; PedidoMapper.java       <span style="color:#94a3b8;"># Generado por MapStruct en compilacion</span>
+    &#9474;   &#9474;   &#9474;       &#9492;&#9472;&#9472; PiezaMapper.java        <span style="color:#94a3b8;"># @Mapping categoria.nombreCategoria</span>
+    &#9474;   &#9474;   &#9500;&#9472;&#9472; entity/                        <span style="color:#94a3b8;"># Entidades JPA - Sin Lombok</span>
+    &#9474;   &#9474;   &#9474;   &#9500;&#9472;&#9472; Categoria.java              <span style="color:#94a3b8;"># @Entity - cat_id PK</span>
+    &#9474;   &#9474;   &#9474;   &#9500;&#9472;&#9472; Pedido.java                 <span style="color:#94a3b8;"># @ManyToMany con Pieza - @PrePersist</span>
+    &#9474;   &#9474;   &#9474;   &#9500;&#9472;&#9472; Pieza.java                  <span style="color:#94a3b8;"># @ManyToOne(LAZY) con Categoria</span>
+    &#9474;   &#9474;   &#9474;   &#9500;&#9472;&#9472; Rol.java                    <span style="color:#94a3b8;"># Entidad Rol</span>
+    &#9474;   &#9474;   &#9474;   &#9492;&#9472;&#9472; Usuario.java                <span style="color:#94a3b8;"># Implementa UserDetails</span>
+    &#9474;   &#9474;   &#9500;&#9472;&#9472; repository/                    <span style="color:#94a3b8;"># Repositorios Spring Data JPA</span>
+    &#9474;   &#9474;   &#9474;   &#9500;&#9472;&#9472; CategoriaRepository.java    <span style="color:#94a3b8;"># JpaRepository&lt;Categoria, Integer&gt;</span>
+    &#9474;   &#9474;   &#9474;   &#9500;&#9472;&#9472; IUsuarioRepository.java     <span style="color:#94a3b8;"># findUsuarioByEmail -&gt; Optional</span>
+    &#9474;   &#9474;   &#9474;   &#9500;&#9472;&#9472; PedidoRepository.java
+    &#9474;   &#9474;   &#9474;   &#9492;&#9472;&#9472; PiezaRepository.java
+    &#9474;   &#9474;   &#9500;&#9472;&#9472; security/                      <span style="color:#94a3b8;"># Seguridad Stateless y JWT</span>
+    &#9474;   &#9474;   &#9474;   &#9500;&#9472;&#9472; AppConfig.java              <span style="color:#94a3b8;"># UserDetailsService - BCrypt - AuthProvider</span>
+    &#9474;   &#9474;   &#9474;   &#9500;&#9472;&#9472; JwtFilter.java              <span style="color:#94a3b8;"># OncePerRequestFilter - valida token</span>
+    &#9474;   &#9474;   &#9474;   &#9500;&#9472;&#9472; JwtService.java             <span style="color:#94a3b8;"># Genera/valida tokens HS256 - 24 h</span>
+    &#9474;   &#9474;   &#9474;   &#9492;&#9472;&#9472; SecurityConfig.java         <span style="color:#94a3b8;"># SecurityFilterChain - STATELESS</span>
+    &#9474;   &#9474;   &#9492;&#9472;&#9472; service/                       <span style="color:#94a3b8;"># Capa de Logica de Negocio</span>
+    &#9474;   &#9474;       &#9500;&#9472;&#9472; AuthService.java            <span style="color:#94a3b8;"># register() y authenticate()</span>
+    &#9474;   &#9474;       &#9500;&#9472;&#9472; IPedidoService.java         <span style="color:#94a3b8;"># Interfaz del servicio de pedidos</span>
+    &#9474;   &#9474;       &#9500;&#9472;&#9472; IPiezaService.java          <span style="color:#94a3b8;"># Interfaz del servicio de piezas</span>
+    &#9474;   &#9474;       &#9500;&#9472;&#9472; PedidoServiceImp.java       <span style="color:#94a3b8;"># @Transactional - valida piezas</span>
+    &#9474;   &#9474;       &#9492;&#9472;&#9472; PiezaServiceImp.java
+    &#9474;   &#9492;&#9472;&#9472; resources/
+    &#9474;       &#9492;&#9472;&#9472; application.properties         <span style="color:#94a3b8;"># Config MySQL, Hibernate y JWT Secret</span>
+    &#9492;&#9472;&#9472; test/java/com/irisdual/pedidos_api/
+        &#9492;&#9472;&#9472; PedidosApiApplicationTests.java     <span style="color:#94a3b8;"># 2 tests JUnit 5</span></pre>
+      </div>
+      <table>
+        <thead><tr><th>Capa / Paquete</th><th>Responsabilidad Principal</th><th>Tecnología Clave</th></tr></thead>
+        <tbody>
+          <tr><td><code>controller</code></td><td>Atención de peticiones HTTP, validación de parámetros y retorno de respuestas JSON.</td><td>Spring Web MVC (<code>@RestController</code>)</td></tr>
+          <tr><td><code>service</code></td><td>Procesamiento de la lógica de negocio, manejo de transacciones y excepciones.</td><td>Spring Core (<code>@Service</code>, <code>@Transactional</code>)</td></tr>
+          <tr><td><code>repository</code></td><td>Operaciones CRUD e interfaz directa con la base de datos MySQL.</td><td>Spring Data JPA (<code>JpaRepository</code>)</td></tr>
+          <tr><td><code>entity</code></td><td>Definición del esquema relacional y mapeo de tablas en la BD. Sin Lombok.</td><td>Jakarta Persistence API (JPA / Hibernate)</td></tr>
+          <tr><td><code>dto &amp; mapper</code></td><td>Desacoplamiento del modelo físico respecto a la capa de presentación.</td><td>MapStruct 1.5.5</td></tr>
+          <tr><td><code>security</code></td><td>Gestión de credenciales, autenticación JWT stateless y encriptación de contraseñas.</td><td>Spring Security 6 &amp; JJWT 0.11.5</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- SECCION 11 -->
+    <section class="section page-break">
+      <h2>11. Guía de Instalación y Ejecución</h2>
+      <p>A continuación se describen los pasos necesarios para clonar, configurar y ejecutar la API en un entorno local.</p>
+      <h3>Prerrequisitos</h3>
+      <ul>
+        <li><strong>Java 17</strong> instalado y configurado en el <code>PATH</code> del sistema.</li>
+        <li><strong>MySQL 8.x</strong> corriendo localmente (puerto 3306 por defecto).</li>
+        <li><strong>Maven 3.x</strong> (o usar el wrapper incluido <code>./mvnw</code>).</li>
+        <li>IDE recomendado: Spring Tool Suite 4/5 o IntelliJ IDEA.</li>
+      </ul>
+      <h3>Pasos de instalación</h3>
+      <ol>
+        <li><strong>Clonar el repositorio</strong><div class="snippet">git clone https://github.com/EnderJack379/irisdual3d-pedidos-api.git
+cd irisdual3d-pedidos-api</div></li>
+        <li><strong>Crear la base de datos en MySQL</strong><div class="snippet">CREATE DATABASE irisdual_db;</div></li>
+        <li><strong>Configurar la conexión en <code>application.properties</code></strong><div class="snippet">spring.datasource.url=jdbc:mysql://localhost:3306/irisdual_db
+spring.datasource.username=TU_USUARIO
+spring.datasource.password=TU_CONTRASEÑA
+spring.jpa.show-sql=true
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.open-in-view=true</div></li>
+        <li><strong>Compilar e instalar dependencias</strong><div class="snippet">./mvnw clean install</div></li>
+        <li><strong>Levantar la aplicación</strong><div class="snippet">./mvnw spring-boot:run</div><p>La API quedará disponible en: <code>http://localhost:8080</code></p></li>
+      </ol>
+      <h3>Flujo de uso básico</h3>
+      <ol>
+        <li>Registrar un usuario: <code>POST /api/auth/register</code> con <code>{"email":"...","password":"..."}</code></li>
+        <li>Obtener el token JWT de la respuesta: <code>{"token": "eyJ..."}</code></li>
+        <li>Usar el token en el header de cada petición: <code>Authorization: Bearer &lt;token&gt;</code></li>
+        <li>Consumir los endpoints de categorías, piezas y pedidos.</li>
+      </ol>
+      <div class="alert alert-warning">
+        <strong>Importante:</strong> El token JWT tiene una expiración de <strong>24 horas</strong>. Pasado ese tiempo, el servidor devuelve <code>403 Forbidden</code> y es necesario autenticarse nuevamente.
+      </div>
+    </section>
+
+    <!-- SECCION 12 -->
+    <section class="section page-break">
+      <h2>12. Conclusiones</h2>
+      <p>El desarrollo de <strong>IrisDual 3D Backend API</strong> como Trabajo Práctico Integrador permitió aplicar en un proyecto real y funcional los conceptos fundamentales de la <strong>Programación Orientada a Objetos</strong> y los patrones de diseño estudiados durante la cursada. El resultado es una API REST completamente operativa, segura y organizada bajo principios SOLID.</p>
+      <h3>Logros técnicos alcanzados</h3>
+      <ul>
+        <li><strong>Arquitectura en capas</strong> con separación clara de responsabilidades: controller → service → repository → entity.</li>
+        <li><strong>Autenticación stateless</strong> con JWT (HS256, 24 h) usando Spring Security 6 en modo lambda DSL moderno, sin WebSecurityConfigurerAdapter.</li>
+        <li><strong>Patrón DTO + MapStruct</strong> que previene LazyInitializationException y desacopla el modelo físico de la presentación.</li>
+        <li><strong>Relaciones JPA complejas</strong>: @ManyToOne y @ManyToMany con tabla intermedia generada automáticamente por Hibernate.</li>
+        <li><strong>Testing con JUnit 5</strong>: verificación de inyección de dependencias y consultas sin errores de Hibernate.</li>
+        <li><strong>Feature Branching</strong> en Git con trazabilidad completa mediante Issues y tablero Kanban en GitHub Projects.</li>
+        <li><strong>Decisión fundamentada</strong> de no usar Lombok en entidades, garantizando compatibilidad con ECJ de Spring Tool Suite 5.3.0.</li>
+      </ul>
+      <h3>Aprendizajes clave</h3>
+      <ul>
+        <li>La importancia de la <strong>gestión de transacciones</strong> JPA (<code>@Transactional</code>) para evitar problemas con la carga perezosa de relaciones.</li>
+        <li>El valor del <strong>patrón DTO</strong> para no exponer el modelo interno de la base de datos directamente en la API.</li>
+        <li>La complejidad real de implementar <strong>seguridad stateless</strong> con filtros personalizados y la cadena de responsabilidad de Spring Security.</li>
+        <li>La importancia de las <strong>pruebas unitarias</strong> para validar el comportamiento del sistema de manera reproducible y confiable.</li>
+      </ul>
+      <div class="alert alert-success">
+        <strong>Estado del proyecto:</strong> La API se encuentra completamente funcional, con todos los endpoints operativos, seguridad JWT implementada, pruebas unitarias superadas y código gestionado mediante Feature Branching en GitHub. Todas las Historias de Usuario fueron completadas con sus criterios de aceptación verificados.
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>
